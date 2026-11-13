@@ -1,8 +1,9 @@
-import express from "express";
+import express, { Request , Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routers/userRouter.js";
+import userRouter from "./routers/authRouter.js";
+import AuthRouter from "./routers/authRouter";
 
 dotenv.config();
 
@@ -13,6 +14,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Luxera Perfume API Running...");
+});
+
+app.use("/api/v1/auth", AuthRouter);
 
 mongoose
   .connect(mongodbURI)

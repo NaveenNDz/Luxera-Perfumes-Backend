@@ -43,12 +43,10 @@ const userSchema = new Schema<IUser>(
     },
     isBlocked: {
       type: Boolean,
-      required: true,
       default: false,
     },
     isEmailVerified: {
       type: Boolean,
-      required: true,
       default: false,
     },
     image: {
@@ -62,4 +60,4 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-export const User = model<IUser>("User", userSchema);
+export const UserModel = model<IUser>("User", userSchema);
