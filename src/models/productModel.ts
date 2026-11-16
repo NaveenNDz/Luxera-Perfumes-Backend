@@ -1,0 +1,71 @@
+import mongoose, { Schema, Document } from "mongoose";
+
+
+export enum ProductCategory {
+  MEN = "Men",
+  WOMEN = "Women",
+  UNISEX = "Unisex",
+}
+
+export interface IProduct extends Document {
+  productId: string;
+  name: string;
+  brand: string;
+  category: ProductCategory; 
+  volume: string;
+  price: number;
+  description: string;
+  image: string;
+  stock: number;
+  isAvailable: boolean;
+}
+
+const productSchema = new Schema<IProduct>(
+  {
+    productId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    brand: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      enum: Object.values(ProductCategory), 
+    },
+    volume: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model<IProduct>("Product", productSchema);
