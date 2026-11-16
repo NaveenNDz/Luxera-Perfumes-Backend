@@ -1,14 +1,11 @@
 import express from "express";
-import { register, login, getMyDetails, getRefreshToken,} from "../controllers/authController";
-import { authenticate } from "../middleware/auth";
- 
- 
+import { register, login, refreshTokenHandler } from "../controllers/authController";
 
-const AuthRouter = express.Router();
+const router = express.Router();
 
-AuthRouter.post("/register", register);
-AuthRouter.post("/login", login);
-AuthRouter.post("/refresh-token", getRefreshToken);
-AuthRouter.get("/me", authenticate, getMyDetails);
+router.post("/register", register);
+router.post("/login", login);
+router.post("/refresh-token", refreshTokenHandler);
 
-export default AuthRouter;
+
+export default router;

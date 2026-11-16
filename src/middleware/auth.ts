@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "";
+const JWT_SECRET = process.env.JWT_SECRET || "luxera-secret";
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -17,23 +17,20 @@ export const authenticate = async (
 ) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
+  if (!authHeader)
     return res.status(401).json({
-      message: "Token missing..!",
+      message: "Token missing",
     });
-  }
 
   const token = authHeader.split(" ")[1];
-  console.log("RECEIVED TOKEN:", token);
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, JWT_SECRET) as any;
     req.user = payload;
     next();
   } catch (error) {
-    console.log(error);
     res.status(401).json({
-      message: "Invalid or expire token..!",
+      message: "Invalid token",
     });
   }
 };

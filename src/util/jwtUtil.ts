@@ -1,28 +1,28 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { IUser } from "../models/userModel.js";
+import { IUser } from "../models/userModel";
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "";
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "";
+const JWT_SECRET = process.env.JWT_SECRET || "luxera-secret";
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET || "luxera-refresh-secret";
 
-export const signAccessToken = (User: IUser) => {
+export const signAccessToken = (user: IUser) => {
   return jwt.sign(
     {
-      sub: User._id.toString(),
-      roles: User.roles,
+      sub: user._id.toString(),
+      roles: user.roles,
     },
     JWT_SECRET,
-    { expiresIn: "30m" },
+    { expiresIn: "15m" },
   );
 };
 
-export const signRefreshToken = (User: IUser) => {
+export const signRefreshToken = (user: IUser) => {
   return jwt.sign(
     {
-      sub: User._id.toHexString(),
-      roles: User.roles,
+      sub: user._id.toString(),
     },
     JWT_REFRESH_SECRET,
     { expiresIn: "7d" },
