@@ -3,6 +3,9 @@ import { Schema, model, Document } from "mongoose";
 export interface IOrder extends Document {
   customer: string;
   email: string;
+  phone?: string;
+  address?: string;
+  paymentMethod?: string;
   salon: string;
   flacon: string;
   quantity: number;
@@ -20,6 +23,18 @@ const orderSchema = new Schema<IOrder>(
     email: {
       type: String,
       required: true,
+    },
+    phone: {
+      type: String,
+      default: "",
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    paymentMethod: {
+      type: String,
+      default: "Cash on delivery",
     },
     salon: {
       type: String,
@@ -43,7 +58,12 @@ const orderSchema = new Schema<IOrder>(
     },
     date: {
       type: String,
-      required: true,
+      default: () =>
+        new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
     },
   },
   { timestamps: true }

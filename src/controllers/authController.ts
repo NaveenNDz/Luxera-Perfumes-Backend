@@ -12,7 +12,7 @@ const JWT_REFRESH_SECRET =
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
 
     const existingUser = await UserModel.findOne({ email });
 
@@ -22,7 +22,7 @@ export const register = async (req: Request, res: Response) => {
       });
 
     const userCount = await UserModel.countDocuments();
-    const role = userCount === 0 ? "ADMIN" : "USER";
+    const assignedRole = role || (userCount === 0 ? "ADMIN" : "STAFF");
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -31,7 +31,7 @@ export const register = async (req: Request, res: Response) => {
       lastName,
       email,
       password: hashedPassword,
-      roles: [role],
+      roles: [assignedRole],
     });
     await newUser.save();
 
@@ -41,6 +41,70 @@ export const register = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       message: "Registration failed",
+    });
+  }
+};
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.find().select("-password").sort({ createdAt: -1 });
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching users",
+    });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { firstName, lastName, email, role } = req.body;
+    const updateData: any = {};
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
+    if (email) updateData.email = email;
+    if (role) updateData.roles = [role];
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating user",
+    });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting user",
     });
   }
 };
