@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 
 import productRouter from "./routers/productRouter";
 import authRouter from "./routers/authRouter";
+import orderRouter from "./routers/orderRouter";
+import reviewRouter from "./routers/reviewRouter";
 
 dotenv.config();
 
@@ -29,6 +31,8 @@ mongoose
 
 app.use("/api/products", productRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/orders", orderRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.get("/", (req, res) => {
   res.send("LUXERA API Server is Running Successfully");
