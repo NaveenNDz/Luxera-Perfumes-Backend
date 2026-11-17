@@ -1,31 +1,26 @@
-import mongoose, { Schema, Document } from "mongoose";
-
-
-export enum ProductCategory {
-  MEN = "Men",
-  WOMEN = "Women",
-  UNISEX = "Unisex",
-}
+import { Schema, model, Document } from "mongoose";
 
 export interface IProduct extends Document {
-  productId: string;
+  number: string;
   name: string;
   brand: string;
-  category: ProductCategory; 
-  volume: string;
+  category: "Men" | "Women" | "Unisex";
+  suitability: "Day" | "Evening" | "Both";
+  function: "Wedding" | "Date Nights" | "Office" | "Parties" | "All Functions";
+  concentration: string;
   price: number;
-  description: string;
+  volume: string;
+  batch: string;
   image: string;
+  description: string;
   stock: number;
-  isAvailable: boolean;
 }
 
 const productSchema = new Schema<IProduct>(
   {
-    productId: {
+    number: {
       type: String,
       required: true,
-      unique: true,
     },
     name: {
       type: String,
@@ -37,9 +32,20 @@ const productSchema = new Schema<IProduct>(
     },
     category: {
       type: String,
-      enum: Object.values(ProductCategory), 
+      enum: ["Men", "Women", "Unisex"],
+      required: true,
     },
-    volume: {
+    suitability: {
+      type: String,
+      enum: ["Day", "Evening", "Both"],
+      required: true,
+    },
+    function: {
+      type: String,
+      enum: ["Wedding", "Date Nights", "Office", "Parties", "All Functions"],
+      required: true,
+    },
+    concentration: {
       type: String,
       required: true,
     },
@@ -47,7 +53,11 @@ const productSchema = new Schema<IProduct>(
       type: Number,
       required: true,
     },
-    description: {
+    volume: {
+      type: String,
+      required: true,
+    },
+    batch: {
       type: String,
       required: true,
     },
@@ -55,17 +65,17 @@ const productSchema = new Schema<IProduct>(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      required: true,
+    },
     stock: {
       type: Number,
       required: true,
-      default: 0,
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true,
+      default: 50,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IProduct>("Product", productSchema);
+export const Product = model<IProduct>("Product", productSchema);
