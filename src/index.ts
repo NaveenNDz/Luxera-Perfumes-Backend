@@ -19,8 +19,14 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/luxera";
 
 mongoose
   .connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("MongoDB Connected Successfully to LUXERA Database");
+
+    try {
+      await mongoose.connection.collection("orders").dropIndex("orderNumber_1");
+    } catch {
+    }
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

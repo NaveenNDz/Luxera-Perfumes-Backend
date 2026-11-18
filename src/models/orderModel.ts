@@ -1,5 +1,13 @@
 import { Schema, model, Document } from "mongoose";
 
+export interface IOrderItem {
+  name: string;
+  brand?: string;
+  volume?: string;
+  quantity: number;
+  price: number;
+}
+
 export interface IOrder extends Document {
   customer: string;
   email: string;
@@ -8,6 +16,7 @@ export interface IOrder extends Document {
   paymentMethod?: string;
   salon: string;
   flacon: string;
+  items?: IOrderItem[];
   quantity: number;
   total: number;
   status: string;
@@ -44,6 +53,15 @@ const orderSchema = new Schema<IOrder>(
       type: String,
       required: true,
     },
+    items: [
+      {
+        name: { type: String },
+        brand: { type: String },
+        volume: { type: String },
+        quantity: { type: Number },
+        price: { type: Number },
+      },
+    ],
     quantity: {
       type: Number,
       required: true,

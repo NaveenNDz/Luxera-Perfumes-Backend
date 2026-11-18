@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Order } from "../models/orderModel";
+import { sendOrderConfirmationEmail } from "../util/emailService";
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
@@ -17,6 +18,7 @@ export const createOrder = async (req: Request, res: Response) => {
   try {
     const orderData = {
       ...req.body,
+      status: "Pending",
       date:
         req.body.date ||
         new Date().toLocaleDateString("en-GB", {
@@ -29,11 +31,28 @@ export const createOrder = async (req: Request, res: Response) => {
     const order = new Order(orderData);
     const savedOrder = await order.save();
 
+    const emailResult = await sendOrderConfirmationEmail({
+      orderId: (savedOrder._id || savedOrder.id || "").toString(),
+      customer: savedOrder.customer,
+      email: savedOrder.email,
+      phone: savedOrder.phone,
+      address: savedOrder.address,
+      paymentMethod: savedOrder.paymentMethod,
+      status: savedOrder.status,
+      total: savedOrder.total,
+      flacon: savedOrder.flacon,
+      items: req.body.items || savedOrder.items,
+      date: savedOrder.date,
+    });
+
     res.status(201).json({
       success: true,
       data: savedOrder,
+      emailSent: emailResult.success,
+      emailPreview: emailResult.previewUrl || undefined,
     });
   } catch (error) {
+    console.error("Error creating order:", error);
     res.status(500).json({
       message: "Error placing order",
     });
